@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>113306009_HW6_1A2B</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .input-container {
+            margin: 20px;
+        }
+        .result {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            width: 100px;
+            text-align: center;
+        }
+        .reset-button {
+            background-color: #007bff;
+        }
+        .reset-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>113306009_HW6_1A2B</h1>
+    
+    <div class="container">
+        <div class="input-container">
+            <label for="guess">請輸入4個無重複的數字：</label>
+            <input type="text" id="guess" maxlength="4">
+            <button onclick="checkAnswer()">提交</button>
+        </div>
+
+        <div class="result">
+            <p>猜測次數：<span id="attemptCount">0</span></p>
+            <p>提示：</p>
+            <ul id="hintsList"></ul>
+        </div>
+        <div id="resetSection" style="display: none;">
+            <p>恭喜你答對了！</p>
+            <button class="reset-button" onclick="resetGame()">再玩一次</button>
+        </div>
+    </div>
+
+    <script>
+        function generateAnswer() {
+            let numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            let answer = [];
+            for (let i = 0; i < 4; i++) {
+                let randomIndex = Math.floor(Math.random() * numbers.length);
+                let selectedNumber = numbers.splice(randomIndex, 1)[0];
+                answer.push(selectedNumber);
+            }
+            return answer;
+        }
+
+        function checkAnswer() {
+            const inputField = document.getElementById('guess');
+            const userGuess = inputField.value.trim();
+
+            inputField.value = '';
+
+            if (userGuess.length !== 4 || /(\d)\1/.test(userGuess)) {
+                alert("請輸入四個不重複的數字！");
+                return;
+            }
+
+            let userArray = userGuess.split('');
+            let correctPosition = 0;
+            let correctNumber = 0;
+            let remainingAnswer = [...answer];
+            let remainingGuess = [...userArray];
+
+            for (let i = 0; i < 4; i++) {
+                if (userArray[i] === answer[i]) {
+                    correctPosition++;
+                    remainingAnswer.splice(remainingAnswer.indexOf(userArray[i]), 1);
+                    remainingGuess[i] = null; // 設為 null，避免重複計算
+                }
+            }
+
+            for (let i = 0; i < 4; i++) {
+                if (remainingGuess[i] !== null && remainingAnswer.includes(remainingGuess[i])) {
+                    correctNumber++;
+                    remainingAnswer.splice(remainingAnswer.indexOf(remainingGuess[i]), 1);
+                }
+            }
+
+            document.getElementById('attemptCount').textContent = ++attemptCount;
+            const hint = `${correctPosition}A${correctNumber}B`;
+            const hintsList = document.getElementById('hintsList');
+            const li = document.createElement('li');
+            li.textContent = `猜測: ${userGuess} - 提示: ${hint}`;
+            hintsList.appendChild(li);
+
+            if (correctPosition === 4) {
+                alert(`恭喜你猜對了！總共猜了 ${attemptCount} 次`);
+                document.getElementById('resetSection').style.display = 'block'; // 顯示確認按鈕
+            }
+        }
+
+        function resetGame() {
+            answer = generateAnswer();
+            attemptCount = 0;
+            document.getElementById('attemptCount').textContent = attemptCount;
+            document.getElementById('hintsList').innerHTML = '';
+            document.getElementById('resetSection').style.display = 'none';
+        }
+
+        let answer = generateAnswer();
+        let attemptCount = 0;
+    </script>
+</body>
+</html>
